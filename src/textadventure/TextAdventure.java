@@ -1,30 +1,50 @@
-package com.aaron;
+package textadventure;
+
+import org.apache.commons.configuration.ConfigurationException;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
+import java.io.File;
 
 public class TextAdventure extends Component {
-    static final Path configFilePath = Paths.get("main.conf");
+    static final String configFilePath = "settings.xml";
 
     static JFrame f;
     int fWidth, fHeight;
 
-    private String GlyphSpritePath;
+    private String glyphSpritePath;
     private int tileWidth, tileHeight;
+
+    private ImageFont sprites;
 
     private TextAdventure() {
         this.parseConfig();
+        // TODO: Refactor all of this
+        this.sprites = new ImageFont(this.glyphSpritePath);
     }
 
     private void parseConfig() {
+        Configurator c;
+        File config = new File(this.configFilePath);
+
+        if(config.exists() && !config.isDirectory()) {
+            try {
+                c = new Configurator(this.configFilePath);
+            } catch (ConfigurationException e) {
+                e.printStackTrace();
+                c = new Configurator();
+            }
+        } else {
+            c = new Configurator();
+        }
+        this.glyphSpritePath = c.getString("glyphSprites");
+        this.fWidth = c.getInt("frameWidth");
+        this.fHeight = c.getInt("frameHeight");
+        this.tileWidth = c.getInt("tileWidth");
+        this.tileHeight = c.getInt("tileHeight");
+        /*
         List<String> configFile = null;
         try {
             configFile = Files.readAllLines(configFilePath, StandardCharsets.US_ASCII);
@@ -35,12 +55,13 @@ public class TextAdventure extends Component {
 
         for(String configLine : configFile) {
             String[] parts = configLine.split(" ");
-            if(parts[0].equals("GlyphSprites")) this.GlyphSpritePath = parts[1];
             else if(parts[0].equals("tileWidth")) this.tileWidth = Integer.parseInt(parts[1]);
-            else if(parts[0].equals("tileHeight")) this.tileHeight = Integer.parseInt(parts[1]);
-            else if(parts[0].equals("frameWidth")) this.fWidth = Integer.parseInt(parts[1]);
-            else if(parts[0].equals("frameHeight")) this.fHeight = Integer.parseInt(parts[1]);
         }
+        */
+    }
+
+    public void paint(Graphics g) {
+        sprites.drawTileNumC(ImageFont.T_UP_LEFT_CORNER, 0, 0, Color.white, g);
     }
 
     public Dimension getPreferredSize() {

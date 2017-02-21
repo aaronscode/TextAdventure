@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<configuration>
+<glyphSprites>res/CodePageTransparent.png</glyphSprites>
+<tileWidth>9</tileWidth>
+<tileHeight>16</tileHeight>
+<frameWidth>800</frameWidth>
+<frameHeight>800</frameHeight>
+</configuration>
