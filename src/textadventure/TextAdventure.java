@@ -17,12 +17,13 @@ public class TextAdventure extends Component {
     private String glyphSpritePath;
     private int tileWidth, tileHeight;
 
-    private ImageFont sprites;
+    private SpriteSheet sprites;
+
+    private Configurator configurator;
 
     private TextAdventure() {
         this.parseConfig();
-        // TODO: Refactor all of this
-        this.sprites = new ImageFont(this.glyphSpritePath);
+        this.sprites = new SpriteSheet(this.glyphSpritePath, this.tileWidth, this.tileHeight);
     }
 
     private void parseConfig() {
@@ -39,29 +40,26 @@ public class TextAdventure extends Component {
         } else {
             c = new Configurator();
         }
+        this.configurator = c;
         this.glyphSpritePath = c.getString("glyphSprites");
         this.fWidth = c.getInt("frameWidth");
         this.fHeight = c.getInt("frameHeight");
         this.tileWidth = c.getInt("tileWidth");
         this.tileHeight = c.getInt("tileHeight");
-        /*
-        List<String> configFile = null;
-        try {
-            configFile = Files.readAllLines(configFilePath, StandardCharsets.US_ASCII);
-        } catch (IOException e) {
-            System.out.println("Config File not found");
-            System.exit(1);
-        }
+    }
 
-        for(String configLine : configFile) {
-            String[] parts = configLine.split(" ");
-            else if(parts[0].equals("tileWidth")) this.tileWidth = Integer.parseInt(parts[1]);
+    public void saveConfig() {
+        try {
+            this.configurator.save();
+        } catch (ConfigurationException e) {
+            e.printStackTrace();
         }
-        */
     }
 
     public void paint(Graphics g) {
-        sprites.drawTileNumC(ImageFont.T_UP_LEFT_CORNER, 0, 0, Color.white, g);
+        sprites.drawTileNumC(SpriteSheet.T_UP_LEFT_CORNER, 0, 0, Color.white, g);
+        sprites.drawTileNumC(SpriteSheet.T_UP_AND_DOWN_ARROW_BAR, 7*this.tileWidth, 7*this.tileHeight, Color.white, g);
+        sprites.drawCharC('*', 8*this.tileWidth, 7*this.tileHeight, Color.orange, g);
     }
 
     public Dimension getPreferredSize() {
@@ -71,6 +69,8 @@ public class TextAdventure extends Component {
     public static void main(String[] args) {
         f = new JFrame("Text Adventure");
 
+        TextAdventure txtA = new TextAdventure();
+
         f.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent windowEvent) {
@@ -79,7 +79,6 @@ public class TextAdventure extends Component {
             }
         });
 
-	    TextAdventure txtA = new TextAdventure();
 
 	    f.getContentPane().setBackground(Color.black);
 	    f.add(txtA);

@@ -1,12 +1,11 @@
 package textadventure;
 
-
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
 import javax.imageio.*;
 
-public class ImageFont {
+public class SpriteSheet {
     BufferedImage tilesImg; // entire image with all character tiles
     BufferedImage[] tiles;  // break down original image into array of individual
     // easily indexible character tiles
@@ -16,28 +15,39 @@ public class ImageFont {
     int numCols, numRows; // number of columns and rows of tiles in the image
     int numTiles; // total number of tiles, numCols * numRows
 
-    public ImageFont() {
-        this("CodePageTransparent.png");
+    static final String DEFAULT_SPRITESHEET_LOC = "res/CodePageTransparent.png";
+    static final int DEFAULT_TILE_WIDTH = 9;
+    static final int DEFAULT_TILE_HEIGHT = 16;
+
+    /* ---------------------------------------------------------*
+     * Constructors                                             *
+     * ---------------------------------------------------------*/
+
+    // Default constructor
+    public SpriteSheet() {
+        this(DEFAULT_SPRITESHEET_LOC);
     }
 
-    public ImageFont(String pathToImage) {
-        this(pathToImage, 32, 8);
+    public SpriteSheet(String pathToImage) {
+        this(pathToImage, DEFAULT_TILE_WIDTH, DEFAULT_TILE_HEIGHT);
     }
 
-    public ImageFont(String pathToImage, int numCols, int numRows) {
+    public SpriteSheet(String pathToImage, int tileWidth, int tileHeight) {
         try {
-            tilesImg = convertToARGB(ImageIO.read(new File(pathToImage)));
+            tilesImg = convertToARGB(ImageIO.read(new File(pathToImage))); // load the sprite sheet with alpha
 
+            // set/calculate dimensions of sprite sheets and sprites
             this.imgW = tilesImg.getWidth();
             this.imgH = tilesImg.getHeight();
-            this.numCols = numCols;
-            this.numRows = numRows;
+            this.tW = tileWidth;
+            this.tH = tileHeight;
+            this.numCols = this.imgW / this.tW;
+            this.numRows = this.imgH / this.tH;
             this.numTiles = numCols * numRows;
-            this.tW = this.imgW / this.numCols;
-            this.tH = this.imgH / this.numRows;
 
-            this.tiles = new BufferedImage[this.numTiles];
+            this.tiles = new BufferedImage[this.numTiles]; // allocate an array to hold each sprite from the sheet
 
+            // add each sprite from the sheet to the array of sprites
             for(int i = 0; i < numCols; i++) {
                 for(int j = 0; j < numRows; j++) {
                     tiles[(numCols * j) + i] = tilesImg.getSubimage(i * tW,  j * tH, tW,tH);
@@ -47,10 +57,28 @@ public class ImageFont {
             System.out.println("Couldn't load the image: " + e);
         }
     }
-
-        /* ------------------------------------------------------------------------------ *
-         * Drawing methods                                                                *
-         * ------------------------------------------------------------------------------ */
+    /* ------------------------------------------------------------------------------*
+    * Drawing methods                                                                *
+    * ------------------------------------------------------------------------------*/
+    // These methods are all for drawing individual sprites. Since the sprites I'm
+    // using are largely type-able characters, I have methods for drawing characters,
+    // and strings, but these eventually all funnel down to the draw tile num methods,
+    // where the value of each char is converted to an int for indexing the array of
+    // sprites.
+    //
+    // There are several main types of drawing methods. Let's take for example
+    // drawChar(), which is the most simple character drawing method. It draws a single
+    // character with the default character of white.
+    // Adding an 's' to the end of the
+    // method name (drawChars, now), means that thing you are drawing an array of things.
+    // The drawing methods will automatically space each consecutive sprite one tile-width
+    // apart, so that the sprites don't overlap.
+    // The next modifier is a 'C' (as in drawCharC), which means the method allows you to
+    // specify a color other than white to color the sprite.
+    // Logically, then, drawCharsC lets you draw an array of characters all with the same
+    // specified color.
+    // Finally, an 'sCs' (i.e. drawCharsCs) modifier means you specify a color for each
+    // character as an input argument in the form of a Color array.
 
     public void drawChar(char ch, int x, int y, Graphics g) {
         int ascii = (int) ch;
@@ -132,13 +160,14 @@ public class ImageFont {
         }
     }
 
-        /* ------------------------------------------------------------------------------ *
-         * Getters / Setters                                                              *
-         * ------------------------------------------------------------------------------ */
+    /* ------------------------------------------------------------------------------*
+    * Getters / Setters                                                              *
+    * ------------------------------------------------------------------------------*/
 
     public int tileWidth()  { return this.tW; }
     public int tileHeight() { return this.tH; }
 
+    // from stack overflow, makes sure we get an image with an alpha channel.
     public static BufferedImage convertToARGB(BufferedImage image) {
         BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = newImage.createGraphics();
@@ -150,6 +179,9 @@ public class ImageFont {
     /* ------------------------------------------------------------------------------ *
      * Tile ID constants                                                              *
      * ------------------------------------------------------------------------------ */
+    // These are really only usefull if you're using codepage 437 as your sprite sheet
+    // (see https://en.wikipedia.org/wiki/Code_page_437)
+    // TODO: I plan on refactoring these out into their own class at some point.
     public static final int T_BLANK = 0;
     public static final int T_SMILEY = 1;
     public static final int T_INVERTED_SMILEY = 2;
@@ -182,7 +214,7 @@ public class ImageFont {
     public static final int T_LEFT_AND_RIGHT_ARROW = 29;
     public static final int T_UP_TRIANGLE = 30;
     public static final int T_DOWN_TRIANGLE = 31;
-
+    // [insert alpha numberic characters that you can actually type here]
     public static final int T_VERT_BAR = 179;
     public static final int T_UP_RIGHT_CORNER = 191;
     public static final int T_BOT_LEFT_CORNER = 192;

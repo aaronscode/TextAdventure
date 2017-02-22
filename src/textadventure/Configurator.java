@@ -7,9 +7,9 @@ import java.io.File;
 
 public class Configurator extends XMLConfiguration {
     static final String DEFAULT_CONFIG_PATH = "settings.xml";
-    static final String DEFAULT_GLYPH_SPRITES = "res/CodePageTransparent.png";
-    static final int DEFAULT_TILE_WIDTH = 9;
-    static final int DEFAULT_TILE_HEIGHT = 16;
+    static final String DEFAULT_GLYPH_SPRITES = "res/CodePageTransparent2x.png";
+    static final int DEFAULT_TILE_WIDTH = 18;
+    static final int DEFAULT_TILE_HEIGHT = 32;
     static final int DEFAULT_FRAME_WIDTH = 800;
     static final int DEFAULT_FRAME_HEIGHT = 800;
 
