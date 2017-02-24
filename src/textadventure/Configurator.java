@@ -12,6 +12,7 @@ public class Configurator extends XMLConfiguration {
     static final int DEFAULT_TILE_HEIGHT = 32;
     static final int DEFAULT_FRAME_WIDTH = 800;
     static final int DEFAULT_FRAME_HEIGHT = 800;
+    static final int DEFAULT_TARGET_FPS = 60;
 
     public Configurator() {
             super();
@@ -21,6 +22,7 @@ public class Configurator extends XMLConfiguration {
             this.setProperty("tileHeight", DEFAULT_TILE_HEIGHT);
             this.setProperty("frameWidth", DEFAULT_FRAME_WIDTH);
             this.setProperty("frameHeight", DEFAULT_FRAME_HEIGHT);
+            this.setProperty("targetFPS", DEFAULT_TARGET_FPS);
 
             try {
                 this.save();

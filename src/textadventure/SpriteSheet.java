@@ -5,6 +5,12 @@ import java.awt.image.*;
 import java.io.*;
 import javax.imageio.*;
 
+/**
+ * SpriteSheet: simple class to implement sprite sheet functionality
+ * @author      Aaron Gross     <aaron.gross@temple.edu>
+ * @version     0.1
+ *
+ */
 public class SpriteSheet {
     BufferedImage tilesImg; // entire image with all character tiles
     BufferedImage[] tiles;  // break down original image into array of individual
@@ -136,14 +142,16 @@ public class SpriteSheet {
 
     public void drawTileNumC(int tileNum, int x, int y, Color c, Graphics g) {
         BufferedImage coloredTile = tiles[tileNum];
+        int[] rgbArray = new int[this.tW * this.tH];
         for(int i = 0; i < this.tW; i++) {
             for(int j = 0; j < this.tH; j++) {
                 Color originalColor = new Color(coloredTile.getRGB(i, j), true);
                 Color nc = new Color(c.getRed(), c.getGreen(), c.getBlue(), originalColor.getAlpha());
-                coloredTile.setRGB(i, j, nc.getRGB());
+                rgbArray[i + this.tW * j] = nc.getRGB();
             }
         }
-        g.drawImage(tiles[tileNum], x, y, null);
+        coloredTile.setRGB(0, 0, this.tW, this.tH, rgbArray, 0, this.tW);
+        g.drawImage(coloredTile, x, y, null);
     }
 
     public void drawTileNumsC(int[] tileNums, int x, int y, Color c, Graphics g) {

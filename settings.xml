@@ -5,4 +5,5 @@
 <tileHeight>32</tileHeight>
 <frameWidth>800</frameWidth>
 <frameHeight>800</frameHeight>
+<targetFPS>60</targetFPS>
 </configuration>
